@@ -1,0 +1,11 @@
+.*
+*.md
+*.json
+node_modules/
+bin/
+coverage/
+data/
+test/
+var/
+package-lock.json
+package.json

@@ -1,0 +1,14 @@
+# comment
+*.md
+.git
+*Dockerfile*
+*docker-compose*
+node_modules
+var
+test
+data
+coverage
+npm-debug.log
+.vscode
+.nyc_output
+.dockerignore

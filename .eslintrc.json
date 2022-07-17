@@ -1,0 +1,55 @@
+{
+  "env": {
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": [
+    "airbnb-base",
+    "prettier",
+    "plugin:node/recommended",
+    "plugin:mocha/recommended"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly",
+    "MyModuleExports": "readonly",
+    "ErrorHandler": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "plugins": ["prettier", "mocha", "no-loops"],
+  "rules": {
+    "func-names": 0,
+    "no-console": 1,
+    "no-underscore-dangle": 1,
+    "no-loops/no-loops": 1,
+    "no-param-reassign": 1,
+    "no-unused-vars": 1,
+    "prettier/prettier": 2,
+    "mocha/no-skipped-tests": 2,
+    "mocha/no-exclusive-tests": 2,
+    "node/no-missing-require": [
+      "error",
+      {
+        "allowModules": [],
+        "resolvePaths": ["."],
+        "tryExtensions": [".js", ".json", ".node"]
+      }
+    ] // This one is for require
+  },
+  "settings": {
+    "mocha/additionalCustomNames": [
+      { "name": "describeModule", "type": "suite", "interfaces": ["BDD"] },
+      { "name": "testModule", "type": "testCase", "interfaces": ["TDD"] }
+    ],
+    "import/resolver": {
+      "node": {
+        "paths": ["."],
+        "extensions": [".js"]
+      }
+    } // This one is for Import
+  }
+}
