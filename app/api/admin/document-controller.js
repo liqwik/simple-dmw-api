@@ -201,7 +201,9 @@ module.exports = {
       doc.text('កម្មវត្ថុ : ', 16, descLinePos);
 
       doc.font(bodyFont);
-      doc.text(docDescription, 60, descLinePos);
+      doc.text(docDescription, 60, descLinePos, {
+        align: 'justify',
+      });
       doc.moveDown();
 
       doc.font(titleFont);
