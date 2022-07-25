@@ -16,13 +16,13 @@ module.exports = {
       allow: ALLOW_OFFICER,
     },
     action: async (ctx) => {
-      const { q, fq, sb, docStart, docEnd, isSign } = ctx.query;
+      const { q, fq, sb, docStart, docEnd, isSign, status } = ctx.query;
       const { limit, page } = getPagination(ctx.query);
       const filter = getFilterQuery(fq);
 
       const result = await documentService.getList(
         {
-          filter: { ...filter, docStart, docEnd, isSign },
+          filter: { ...filter, docStart, docEnd, isSign, status },
           search: q,
           searchFields: ['docNo', 'docIn.no'],
         },

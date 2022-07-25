@@ -57,6 +57,12 @@ const DocumentService = function ({ documentRepo }) {
           isSign: !!(filter.isSign * 1),
         };
       }
+      if (filter.status) {
+        match = {
+          ...match,
+          docStatus: filter.status,
+        };
+      }
 
       const data = await documentRepo.model
         .find(match)
