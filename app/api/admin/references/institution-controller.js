@@ -56,7 +56,7 @@ module.exports = {
   get: {
     route: `${routePrefix}/:id`,
     guard: {
-      allow: ALLOW_ADMIN,
+      allow: ALLOW_OFFICER,
     },
     action: async (ctx) => {
       const { id } = ctx.params;
@@ -72,7 +72,7 @@ module.exports = {
     route: routePrefix,
     method: 'post',
     guard: {
-      allow: ALLOW_ADMIN,
+      allow: ALLOW_OFFICER,
     },
     action: async (ctx) => {
       const { user } = ctx.state;
@@ -92,7 +92,7 @@ module.exports = {
     route: `${routePrefix}/:id`,
     method: 'put',
     guard: {
-      allow: ALLOW_ADMIN,
+      allow: ALLOW_OFFICER,
     },
     action: async (ctx) => {
       const { id } = ctx.params;
