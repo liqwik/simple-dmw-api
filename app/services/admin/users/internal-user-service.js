@@ -1,6 +1,10 @@
 const BaseCRUDService = require('app/services/shared/base-crud-service');
 const { hashPassword } = require('app/utils/auth-util');
-const { ROLE_ADMIN, ROLE_OFFICER } = require('app/utils/constant');
+const {
+  ROLE_ADMIN,
+  ROLE_OFFICER,
+  ROLE_ASSISTANT,
+} = require('app/utils/constant');
 
 const InternalUserService = function ({ internalUserRepo }) {
   return {
@@ -16,13 +20,16 @@ const InternalUserService = function ({ internalUserRepo }) {
       lastname,
       userType,
     }) => {
+      const userRole = userType.toLowerCase();
       const hashedPassword = await hashPassword(password);
       let userRoles = [];
 
-      if (userType.toLowerCase() === ROLE_ADMIN.toLowerCase()) {
+      if (userRole === ROLE_ADMIN.toLowerCase()) {
         userRoles = [ROLE_ADMIN];
-      } else if (userType.toLowerCase() === ROLE_OFFICER.toLowerCase()) {
+      } else if (userRole === ROLE_OFFICER.toLowerCase()) {
         userRoles = [ROLE_OFFICER];
+      } else if (userRole === ROLE_ASSISTANT.toLowerCase()) {
+        userRoles = [ROLE_ASSISTANT];
       }
 
       const userEntity = await internalUserRepo.create({
@@ -38,12 +45,15 @@ const InternalUserService = function ({ internalUserRepo }) {
     },
 
     update: async (id, { username, email, firstname, lastname, userType }) => {
+      const userRole = userType.toLowerCase();
       let userRoles = [];
 
-      if (userType.toLowerCase() === ROLE_ADMIN.toLowerCase()) {
+      if (userRole === ROLE_ADMIN.toLowerCase()) {
         userRoles = [ROLE_ADMIN];
-      } else if (userType.toLowerCase() === ROLE_OFFICER.toLowerCase()) {
+      } else if (userRole === ROLE_OFFICER.toLowerCase()) {
         userRoles = [ROLE_OFFICER];
+      } else if (userRole === ROLE_ASSISTANT.toLowerCase()) {
+        userRoles = [ROLE_ASSISTANT];
       }
 
       const result = await internalUserRepo.update(

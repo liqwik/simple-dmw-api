@@ -58,7 +58,7 @@ const schema = new Schema(
     roles: [
       {
         type: String,
-        enum: ['SUPER_ADMIN', 'ADMIN', 'OFFICER'],
+        enum: ['SUPER_ADMIN', 'ADMIN', 'OFFICER', 'ASSISTANT'],
       },
     ],
     isLocked: {

@@ -79,7 +79,9 @@ module.exports = {
 
       if (
         !type ||
-        (type !== roleDefinition.ADMIN && type !== roleDefinition.OFFICER)
+        (type !== roleDefinition.ADMIN &&
+          type !== roleDefinition.OFFICER &&
+          type !== roleDefinition.ASSISTANT)
       ) {
         return HttpResponse.notAccept(ctx);
       }
@@ -109,7 +111,9 @@ module.exports = {
 
       if (
         !type ||
-        (type !== roleDefinition.ADMIN && type !== roleDefinition.OFFICER)
+        (type !== roleDefinition.ADMIN &&
+          type !== roleDefinition.OFFICER &&
+          type !== roleDefinition.ASSISTANT)
       ) {
         return HttpResponse.notAccept(ctx);
       }

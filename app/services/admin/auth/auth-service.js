@@ -3,7 +3,7 @@ const {
   verifyPassword,
   detectIdentity,
 } = require('app/utils/auth-util');
-const { ROLE_SUPER_ADMIN, ROLE_ADMIN } = require('app/utils/constant');
+const { ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_ASSISTANT } = require('app/utils/constant');
 const { jwtToken } = require('config');
 
 const AuthService = function ({ internalUserRepo }) {
@@ -28,9 +28,18 @@ const AuthService = function ({ internalUserRepo }) {
       });
 
       const isAdmin =
-        entity.roles[0] === ROLE_SUPER_ADMIN || entity.roles[0] === ROLE_ADMIN;
+        entity.roles[0] === ROLE_SUPER_ADMIN ||
+        entity.roles[0] === ROLE_ADMIN ||
+        entity.roles[0] === ROLE_ASSISTANT;
 
-      return { t: token, isAdmin };
+      return {
+        isAdmin,
+        t: token,
+        fn: entity.fn,
+        ln: entity.ln,
+        usr: entity.usr,
+        permissions: entity.roles[0],
+      };
     },
   };
 };
