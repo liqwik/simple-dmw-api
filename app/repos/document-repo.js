@@ -11,7 +11,16 @@ const DocumentRepository = function ({ model }) {
           'docIn.date': { $gte: new Date(start), $lt: new Date(end) },
         },
       };
-      const group = { $group: { _id: '$docStatus', totalDoc: { $sum: 1 } } };
+
+      const group = {
+        $group: {
+          _id: {
+            docStatus: '$docStatus',
+            sign: '$isSign',
+          },
+          totalDoc: { $sum: 1 },
+        },
+      };
 
       return model.aggregate([match, group]);
     },
