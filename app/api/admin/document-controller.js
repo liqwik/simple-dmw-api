@@ -146,6 +146,8 @@ module.exports = {
 
       if (!data) return HttpResponse.notFound(ctx);
 
+      const { docNo, docLunarDate, institutionId, docDescription } = data;
+
       // Create a document
       const titleFont = 'assets/fonts/KHMMOOL1.ttf';
       const bodyFont = 'assets/fonts/KhmerOSbattambang.ttf';
@@ -159,10 +161,6 @@ module.exports = {
       });
 
       const { width: pageWidth, height: pageHeight } = doc.page;
-
-      // Pipe its output somewhere, like to a file or HTTP response
-      // See below for browser usage
-      doc.pipe(ctx.res);
 
       // Embed a font, set the font size, and render some text
       doc.fontSize(12);
@@ -183,8 +181,6 @@ module.exports = {
 
       doc.text('កំណត់បង្ហាញលិខិតចូល', { align: 'center' });
 
-      const { docNo, docLunarDate, institutionId, docDescription } = data;
-
       const linePosDocNo = doc.y;
       doc.font(bodyFont);
       doc.text('លិខិតលេខ : ', 16, linePosDocNo);
@@ -200,12 +196,45 @@ module.exports = {
       doc.font(titleFont);
       doc.text('កម្មវត្ថុ : ', 16, descLinePos);
 
-      doc.font(bodyFont);
-      doc.text(docDescription, 60, descLinePos, {
-        align: 'justify',
-      });
-      doc.moveDown();
+      if (docDescription && docDescription.startsWith('{')) {
+        const delta = JSON.parse(docDescription);
 
+        delta.ops.forEach(({ insert, attributes }, idx) => {
+          doc.font(bodyFont);
+
+          if (attributes && attributes.font === 'Moul') {
+            doc.font(titleFont);
+            doc.text(
+              insert,
+              idx === 0 ? 60 : doc.x,
+              idx === 0 ? descLinePos : doc.y + 2,
+              {
+                continued: true,
+              }
+            );
+            doc.y -= 2;
+
+            return;
+          }
+
+          if (idx === 0) {
+            doc.text(insert, 60, descLinePos, {
+              continued: true,
+            });
+          } else {
+            doc.text(insert, {
+              continued: true,
+            });
+          }
+        });
+      } else {
+        doc.font(bodyFont);
+        doc.text(docDescription, 60, descLinePos, {
+          align: 'justify',
+        });
+      }
+
+      doc.moveDown();
       doc.font(titleFont);
       const columnWidth = pageWidth / 3;
       const tableHeight = Math.floor((pageHeight - doc.y) / 2 + doc.y);
@@ -232,6 +261,10 @@ module.exports = {
 
       doc.text('អភិបាលខេត្ត', 118, tableHeight + 8);
       doc.text('អភិបាលរងខេត្តទទួលបន្ទុក', 386, tableHeight + 8);
+
+      // Pipe its output somewhere, like to a file or HTTP response
+      // See below for browser usage
+      doc.pipe(ctx.res);
 
       doc.end();
 
