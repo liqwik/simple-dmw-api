@@ -6,6 +6,7 @@ const { getFilterQuery } = require('app/utils/querystring-util');
 
 const PDFDocument = require('pdfkit');
 const { documentRepo } = require('app/repos');
+const DateTimeUtil = require('app/utils/datetime-util');
 
 const routePrefix = '/docs';
 
@@ -146,11 +147,13 @@ module.exports = {
 
       if (!data) return HttpResponse.notFound(ctx);
 
-      const { docNo, docLunarDate, institutionId, docDescription } = data;
+      const { docNo, docLunarDate, institutionId, docDescription, docDate } =
+        data;
 
       // Create a document
       const titleFont = 'assets/fonts/KHMMOOL1.ttf';
       const bodyFont = 'assets/fonts/KhmerOSbattambang.ttf';
+      const bodyBoldFont = 'assets/fonts/KhmerOSBattambang-Bold.ttf';
       const logo = 'assets/kandal-logo.png';
       const divider = 'assets/divider.png';
 
@@ -188,7 +191,14 @@ module.exports = {
 
       const docNoWidth = doc.widthOfString(docNo);
       doc.text(docLunarDate, docNoWidth + 92, linePosDocNo);
-      doc.text('រាជធានីភ្នំពេញ', docNoWidth + 92, doc.y);
+
+      const docDateY = doc.y;
+      doc.text('រាជធានីភ្នំពេញ', docNoWidth + 92, docDateY);
+      if (docDate) {
+        const docDateX =
+          doc.widthOfString('រាជធានីភ្នំពេញ') + docNoWidth + 92 + 4;
+        doc.text(DateTimeUtil.toKhmerDate(docDate), docDateX, docDateY);
+      }
 
       doc.text(`របស់ : ${institutionId && institutionId.name}`, 16, doc.y);
 
@@ -202,28 +212,55 @@ module.exports = {
         delta.ops.forEach(({ insert, attributes }, idx) => {
           doc.font(bodyFont);
 
-          if (attributes && attributes.font === 'Moul') {
-            doc.font(titleFont);
-            doc.text(
-              insert,
-              idx === 0 ? 60 : doc.x,
-              idx === 0 ? descLinePos : doc.y + 2,
-              {
-                continued: true,
-              }
-            );
-            doc.y -= 2;
+          /** Create text with font Moul */
+          if (attributes) {
+            if (attributes.font === 'Moul') {
+              doc.font(titleFont);
+              doc.text(
+                insert,
+                idx === 0 ? 60 : doc.x,
+                idx === 0 ? descLinePos : doc.y + 2,
+                {
+                  continued: true,
+                }
+              );
+              doc.y -= 2;
 
-            return;
+              return;
+            }
+
+            if (attributes.bold) {
+              doc.font(bodyBoldFont);
+              doc.text(
+                insert,
+                idx === 0 ? 60 : doc.x,
+                idx === 0 ? descLinePos : doc.y,
+                {
+                  continued: true,
+                }
+              );
+
+              return;
+            }
           }
 
+          /** First line need to be intent X 60px */
           if (idx === 0) {
             doc.text(insert, 60, descLinePos, {
               continued: true,
             });
-          } else {
+          }
+
+          if (idx > 0) {
             doc.text(insert, {
               continued: true,
+            });
+          }
+
+          /** This line is to fix the issue of spacing between new line */
+          if (idx === delta.ops.length - 1) {
+            doc.text('', {
+              continued: false,
             });
           }
         });
@@ -235,6 +272,7 @@ module.exports = {
       }
 
       doc.moveDown();
+
       doc.font(titleFont);
       const columnWidth = pageWidth / 3;
       const tableHeight = Math.floor((pageHeight - doc.y) / 2 + doc.y);

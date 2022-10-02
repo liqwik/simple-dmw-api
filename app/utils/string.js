@@ -14,7 +14,7 @@ const formatDate = (date) => {
   const d = new Date(date);
   let month = d.getMonth() + 1;
   let day = d.getDate();
-  const year = d.getFullYear().toString().substr(-2);
+  const year = d.getFullYear().toString().substring(-2);
 
   if (month.length < 2) month = `0${month}`;
   if (day.length < 2) day = `0${day}`;
